@@ -32,24 +32,15 @@ set(SOURCE_FILES ${TestProjekt_SOURCES})
 add_executable(TestProjekt ${SOURCE_FILES})
 
 find_package(Lua REQUIRED)
-find_package(OpenGL REQUIRED)
-
-
 find_package(PkgConfig REQUIRED)
+
 pkg_search_module(GLFW3 REQUIRED glfw3)
 
 if(NOT ${LUA_FOUND})
     message(FATAL_ERROR "Could not find LUA dependency!")
 endif()
 
-if(NOT ${OPENGL_FOUND})
-    message(FATAL_ERROR "Could not find OpenGL dependency!")
-endif()
-
-message(STATUS "Found openGL")
-message(STATUS ${OPENGL_INCLUDE_DIR})
-
-include_directories(${LUA_INCLUDE_DIR} ${TestProjekt_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${GLFW3_INCLUDE_DIR})
-target_link_libraries(TestProjekt ${LUA_LIBRARY} ${OPENGL_LIBRARY} ${GLFW3_LIBRARIES} ${GLFW3_STATIC_LIBRARIES})
+include_directories(${LUA_INCLUDE_DIR} ${TestProjekt_INCLUDE_DIRS} ${GLFW3_INCLUDE_DIR})
+target_link_libraries(TestProjekt ${LUA_LIBRARY} ${GLFW3_LIBRARIES} ${GLFW3_STATIC_LIBRARIES})
 
 set(CMAKE_BINARY_DIR "~/ClionProjects/TestProjekt/bin/")
