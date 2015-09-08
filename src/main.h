@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <lua.hpp>
-#include "GameEngine/Renderer.h"
-#include "Block.h"
+#include "engine/Renderer.h"
+#include "engine/Block.h"
 
 #endif

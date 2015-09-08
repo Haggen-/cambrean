@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(TestProjekt)
 
-set(CMAKE_MODULE_PATH "/home/haggen/cmakeModules")
+set(PROJECT_NAME "TestProjekt")
+project(${PROJECT_NAME})
 
-file(GLOB_RECURSE TestProjekt_SOURCES "src/*.cpp")
-file(GLOB_RECURSE TestProjekt_HEADERS "src/*.h")
+set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+set(CMAKE_BINARY_DIR "bin")
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -std=c++11")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -O0")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
 elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     if (CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
@@ -18,29 +18,30 @@ elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     endif()
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(TestProjekt_INCLUDE_DIRS "")
+add_subdirectory(src/engine)
+add_subdirectory(src/base)
 
-foreach (_headerfile ${TestProjekt_HEADERS})
-    get_filename_component(_dir ${_headerfile} PATH)
-    list (APPEND TestProjekt_INCLUDE_DIRS ${_dir})
-endforeach()
+set(SOURCE_FILES
+        src/main.cpp
+)
 
-list(REMOVE_DUPLICATES TestProjekt_INCLUDE_DIRS)
+set(HEADER_FILES src/main.h
+)
 
-set(SOURCE_FILES ${TestProjekt_SOURCES})
-add_executable(TestProjekt ${SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
 
 find_package(Lua REQUIRED)
-find_package(PkgConfig REQUIRED)
 
+find_package(PkgConfig REQUIRED)
 pkg_search_module(GLFW3 REQUIRED glfw3)
 
 if(NOT ${LUA_FOUND})
     message(FATAL_ERROR "Could not find LUA dependency!")
 endif()
 
-include_directories(${LUA_INCLUDE_DIR} ${TestProjekt_INCLUDE_DIRS} ${GLFW3_INCLUDE_DIR})
-target_link_libraries(TestProjekt ${LUA_LIBRARY} ${GLFW3_LIBRARIES} ${GLFW3_STATIC_LIBRARIES})
+if(NOT ${GLFW3_FOUND})
+    message(FATAL_ERROR "Could not find dependency to GLFW3")
+endif()
 
-set(CMAKE_BINARY_DIR "~/ClionProjects/TestProjekt/bin/")
+include_directories(${LUA_INCLUDE_DIR} ${GLFW3_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARY} ${GLFW3_LIBRARIES} ${GLFW3_STATIC_LIBRARIES} CambreanEngine BaseGame)
